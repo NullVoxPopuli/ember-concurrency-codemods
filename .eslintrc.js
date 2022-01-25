@@ -1,15 +1,13 @@
-module.exports = {
-  parserOptions: {
-    ecmaVersion: 2018,
-  },
+'use strict';
 
-  plugins: ['prettier', 'node'],
-  extends: ['eslint:recommended', 'plugin:prettier/recommended', 'plugin:node/recommended'],
-  env: {
-    node: true,
-  },
-  rules: {},
+const { configs } = require('@nullvoxpopuli/eslint-configs');
+
+const config = configs.nodeCJS();
+
+module.exports = {
+  ...config,
   overrides: [
+    ...config.overrides,
     {
       files: ['__tests__/**/*.js'],
       env: {

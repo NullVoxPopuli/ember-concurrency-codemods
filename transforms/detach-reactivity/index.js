@@ -5,7 +5,6 @@ module.exports = function transformer(file, api) {
   const j = getParser(api);
   const options = getOptions();
 
-
   // Remember to use the `ts` parser
   let root = j(file.source);
   let comment = 'Added as a part of the ember-concurrency v1.3.0 to 2.2.0 codemod';
@@ -18,19 +17,19 @@ module.exports = function transformer(file, api) {
   awaited.comments = [comment];
 
   // Figure out what is imported
-  root.find(j.ImportDeclaration, { source: { value: importPath } }).forEach(path => {
-    importedSpecifierNames.push(...path.node.specifiers.map(specifier => specifier.local.name));
+  root.find(j.ImportDeclaration, { source: { value: importPath } }).forEach((path) => {
+    importedSpecifierNames.push(...path.node.specifiers.map((specifier) => specifier.local.name));
   });
 
   // Find all decorator usages... and insert awaited or yieldyBoi at the top
   console.log(importedSpecifierNames);
-
 
   ///////////////////////////////////
   // Helpers
   /////////////////////////////////
   function detachReactivityFrom(node) {
     let allowed = ['FunctionExpression', 'ArrowFunctionExpression', 'ClassMethod'];
+
     if (!allowed.includes(node.type)) return;
 
     let bodyBlock = node.body;
@@ -47,12 +46,11 @@ module.exports = function transformer(file, api) {
   function firstMatchingDecorator(node, named = []) {
     if (!node.decorators) return;
 
-    return node.decorators.find(decorator => {
+    return node.decorators.find((decorator) => {
       let { expression } = decorator;
 
       switch (expression.type) {
         case 'MethodDefinition': {
-
         }
         case 'CallExpression': {
           let { callee } = expression;
@@ -65,9 +63,7 @@ module.exports = function transformer(file, api) {
 
               return named.includes(object.callee.name);
             }
-
           }
-
         }
         case 'Identifier':
           return named.includes(expression.name);
@@ -83,17 +79,17 @@ module.exports = function transformer(file, api) {
   ///////////////////////////////////
   // Transforms
   /////////////////////////////////
-  root.find(j.ClassMethod).forEach(path => {
+  root.find(j.ClassMethod).forEach((path) => {
     let { node } = path;
     let { decorators, value } = node;
-	let hasECDecorator = hasDecorators(node, importedSpecifierNames);
+    let hasECDecorator = hasDecorators(node, importedSpecifierNames);
 
     if (hasECDecorator) {
       detachReactivityFrom(node);
     }
   });
 
-  root.find(j.ClassProperty).forEach(path => {
+  root.find(j.ClassProperty).forEach((path) => {
     let { node } = path;
     let { decorators, value } = node;
 
@@ -105,32 +101,32 @@ module.exports = function transformer(file, api) {
         let decorator = firstMatchingDecorator(node, importedSpecifierNames);
         let { expression } = decorator;
 
-        switch(expression.type) {
+        switch (expression.type) {
           case 'CallExpression': {
             let { callee } = expression;
 
             switch (callee.type) {
               case 'Identifier': {
-				let fn = expression.arguments[0];
+                let fn = expression.arguments[0];
 
-	            return detachReactivityFrom(fn);
+                return detachReactivityFrom(fn);
               }
               case 'MemberExpression': {
                 let fn = callee.object.arguments[0];
-                return detachReactivityFrom(fn);
 
+                return detachReactivityFrom(fn);
               }
+
               default:
                 console.log('Unhandled ClassProperty -> Call', expression.callee.type);
             }
-
           }
         }
 
         return;
       }
 
-      switch(value.type) {
+      switch (value.type) {
         case 'FunctionExpression': {
           return detachReactivityFrom(value);
         }
@@ -138,16 +134,13 @@ module.exports = function transformer(file, api) {
           return detachReactivityFrom(value);
         }
         case 'CallExpression': {
-			if (value.callee.name === 'taskFor') {
-                return detachReactivityFrom(value.arguments[0]);
-            }
+          if (value.callee.name === 'taskFor') {
+            return detachReactivityFrom(value.arguments[0]);
+          }
         }
       }
     }
   });
-
-
-
 
   return root.toSource();
 };
