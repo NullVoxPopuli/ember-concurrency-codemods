@@ -21,6 +21,9 @@ node ./bin/cli.js detach-reactivity path/of/files/ or/some**/*glob.js
 
 <!--FIXTURES_TOC_START-->
 * [basic](#basic)
+* [ec-async](#ec-async)
+* [old](#old)
+* [standard](#standard)
 <!--FIXTURES_TOC_END-->
 
 <!--FIXTURES_CONTENT_START-->
@@ -29,47 +32,9 @@ node ./bin/cli.js detach-reactivity path/of/files/ or/some**/*glob.js
 
 **Input** (<small>[basic.input.js](transforms/detach-reactivity/__testfixtures__/basic.input.js)</small>):
 ```js
-import { task, restartableTask, task as fooTask } from 'ember-concurrency';
+import { restartableTask } from 'ember-concurrency';
 
-class A {
-
-  // standard ember-concurrency
-  @task
-  *foo() {
-    console.log();
-  }
-
-  @task({ option: 'boop' })
-  *foo() {
-    console.log();
-  }
-
-  // older ember-concurrency
-  @fooTask
-  foo = function*() {
-    console.log();
-  };
-
-  @task(function*() {
-    console.log();
-  })
-  theWierdOne;
-
-  @task(function* () {
-    console.log();
-  }).drop()
-  theWierderOne;
-
-  // ember-concurrency-async
-  @task async myTask() {
-    console.log();
-  }
-
-  @restartableTask
-  boop = async () => {
-    console.log();
-  }
-
+export class A {
   // ember-concurrency-async + ember-concurrency-ts
   @restartableTask
   boop2 = taskFor(async () => {
@@ -83,24 +48,89 @@ class A {
 
 **Output** (<small>[basic.output.js](transforms/detach-reactivity/__testfixtures__/basic.output.js)</small>):
 ```js
-import { task, restartableTask, task as fooTask } from 'ember-concurrency';
+import { restartableTask } from 'ember-concurrency';
 
-class A {
+export class A {
+  // ember-concurrency-async + ember-concurrency-ts
+  @restartableTask
+  boop2 = taskFor(async () => {
+    await Promise.resolve();
+    console.log();
+  });
 
-  // standard ember-concurrency
-  @task
-  *foo() {
-    yield Promise.resolve();
+
+}
+
+```
+---
+<a id="ec-async">**ec-async**</a>
+
+**Input** (<small>[ec-async.input.js](transforms/detach-reactivity/__testfixtures__/ec-async.input.js)</small>):
+```js
+import { task, restartableTask } from 'ember-concurrency';
+
+export class A {
+  @task async myTask() {
     console.log();
   }
 
-  @task({ option: 'boop' })
-  *foo() {
-    yield Promise.resolve();
+  @restartableTask
+  boop = async () => {
+    console.log();
+  }
+}
+
+```
+
+**Output** (<small>[ec-async.output.js](transforms/detach-reactivity/__testfixtures__/ec-async.output.js)</small>):
+```js
+import { task, restartableTask } from 'ember-concurrency';
+
+export class A {
+  @task async myTask() {
+    await Promise.resolve();
     console.log();
   }
 
-  // older ember-concurrency
+  @restartableTask
+  boop = async () => {
+    await Promise.resolve();
+    console.log();
+  }
+}
+
+```
+---
+<a id="old">**old**</a>
+
+**Input** (<small>[old.input.js](transforms/detach-reactivity/__testfixtures__/old.input.js)</small>):
+```js
+import { task, task as fooTask } from 'ember-concurrency';
+
+export class A {
+  @fooTask
+  foo = function*() {
+    console.log();
+  };
+
+  @task(function*() {
+    console.log();
+  })
+  theWierdOne;
+
+  @task(function* () {
+    console.log();
+  }).drop()
+  theWierderOne;
+}
+
+```
+
+**Output** (<small>[old.output.js](transforms/detach-reactivity/__testfixtures__/old.output.js)</small>):
+```js
+import { task, task as fooTask } from 'ember-concurrency';
+
+export class A {
   @fooTask
   foo = function*() {
     yield Promise.resolve();
@@ -118,27 +148,46 @@ class A {
     console.log();
   }).drop()
   theWierderOne;
+}
 
-  // ember-concurrency-async
-  @task async myTask() {
-    await Promise.resolve();
+```
+---
+<a id="standard">**standard**</a>
+
+**Input** (<small>[standard.input.js](transforms/detach-reactivity/__testfixtures__/standard.input.js)</small>):
+```js
+import { task, task as fooTask } from 'ember-concurrency';
+
+export class A {
+  @task
+  *foo() {
     console.log();
   }
 
-  @restartableTask
-  boop = async () => {
-    await Promise.resolve();
+  @fooTask({ option: 'boop' })
+  *foo() {
+    console.log();
+  }
+}
+
+```
+
+**Output** (<small>[standard.output.js](transforms/detach-reactivity/__testfixtures__/standard.output.js)</small>):
+```js
+import { task, task as fooTask } from 'ember-concurrency';
+
+export class A {
+  @task
+  *foo() {
+    yield Promise.resolve();
     console.log();
   }
 
-  // ember-concurrency-async + ember-concurrency-ts
-  @restartableTask
-  boop2 = taskFor(async () => {
-    await Promise.resolve();
+  @fooTask({ option: 'boop' })
+  *foo() {
+    yield Promise.resolve();
     console.log();
-  });
-
-
+  }
 }
 
 ```
