@@ -25,7 +25,7 @@ module.exports = function transformer(file, api) {
   // Helpers
   /////////////////////////////////
   function hasDetachedReactivity(bodyBlock) {
-    let expressionStatement = bodyBlock.body.find((exp) => {
+    let expressionStatement = bodyBlock.body.find((exp, index) => {
       let { expression } = exp;
 
       if (!expression) return;
@@ -35,6 +35,12 @@ module.exports = function transformer(file, api) {
 
         if (argument.type === 'CallExpression') {
           let { callee } = argument;
+
+          if (callee.type !== 'MemberExpression') {
+            // If the task starts with an await/yield
+            // we don't need to add one ourselves
+            return index === 0 /* likely? */;
+          }
 
           return callee.property.name === 'resolve' && callee.object.name === 'Promise';
         }
