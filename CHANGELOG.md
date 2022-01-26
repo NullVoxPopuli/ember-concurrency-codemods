@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.1...v1.0.2) (2022-01-26)
+
+
+### Bug Fixes
+
+* **detach-reactivity:** support any yield/await at top of function ([0f4f702](https://github.com/NullVoxPopuli/ember-concurrency-codemods/commit/0f4f7026be36b7ac305a57b17b247a57085a49e0))
+
 ## [1.0.1](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.0...v1.0.1) (2022-01-26)
 
 
