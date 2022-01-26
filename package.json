@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency-codemods",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "lint": "eslint --cache .",
     "test": "codemod-cli test",

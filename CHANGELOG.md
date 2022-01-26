@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.0...v1.0.1) (2022-01-26)
+
+
+### Bug Fixes
+
+* **detach-reactivity:** don't error when we encounter something other than an expression ([e5df831](https://github.com/NullVoxPopuli/ember-concurrency-codemods/commit/e5df8314d4809c2a003c5b56c438da99c7f71378))
+
 # 1.0.0 (2022-01-26)
 
 
