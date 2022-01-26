@@ -28,6 +28,8 @@ module.exports = function transformer(file, api) {
     let expressionStatement = bodyBlock.body.find((exp) => {
       let { expression } = exp;
 
+      if (!expression) return;
+
       if (expression.type === 'AwaitExpression' || expression.type === 'YieldExpression') {
         let { argument } = expression;
 

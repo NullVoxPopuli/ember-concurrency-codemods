@@ -4,6 +4,7 @@
   "scripts": {
     "lint": "eslint --cache .",
     "test": "codemod-cli test",
+    "test:one": "codemod-cli test --runInBand -t",
     "test:coverage": "codemod-cli test --coverage",
     "update-docs": "codemod-cli update-docs",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
