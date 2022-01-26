@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "@nullvoxpopuli/eslint-configs": "^2.1.18",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
     "coveralls": "^3.1.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^8.3.0",
@@ -24,12 +26,32 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^26.6.3",
+    "semantic-release": "^18.0.1",
     "prettier": "^2.5.1"
   },
   "engines": {
-    "node": "10.* || 12.* || >= 14"
+    "node": ">= 14"
+  },
+  "release": {
+    "branches": [
+      "main",
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "volta": {
+    "node": "16.13.2",
+    "yarn": "1.22.17",
+    "npm": "8.3.2"
   }
 }
