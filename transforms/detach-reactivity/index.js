@@ -21,18 +21,35 @@ module.exports = function transformer(file, api) {
     importedSpecifierNames.push(...path.node.specifiers.map((specifier) => specifier.local.name));
   });
 
-  // Find all decorator usages... and insert awaited or yieldyBoi at the top
-  console.log(importedSpecifierNames);
-
   ///////////////////////////////////
   // Helpers
   /////////////////////////////////
+  function hasDetachedReactivity(bodyBlock) {
+    let expressionStatement = bodyBlock.body.find((exp) => {
+      let { expression } = exp;
+
+      if (expression.type === 'AwaitExpression' || expression.type === 'YieldExpression') {
+        let { argument } = expression;
+
+        if (argument.type === 'CallExpression') {
+          let { callee } = argument;
+
+          return callee.property.name === 'resolve' && callee.object.name === 'Promise';
+        }
+      }
+    });
+
+    return Boolean(expressionStatement);
+  }
+
   function detachReactivityFrom(node) {
     let allowed = ['FunctionExpression', 'ArrowFunctionExpression', 'ClassMethod'];
 
     if (!allowed.includes(node.type)) return;
 
     let bodyBlock = node.body;
+
+    if (hasDetachedReactivity(bodyBlock)) return;
 
     if (node.async) {
       bodyBlock.body.unshift(awaited);
@@ -75,7 +92,6 @@ module.exports = function transformer(file, api) {
     return Boolean(firstMatchingDecorator(node, named));
   }
 
-  console.log(root);
   ///////////////////////////////////
   // Transforms
   /////////////////////////////////
@@ -118,7 +134,7 @@ module.exports = function transformer(file, api) {
               }
 
               default:
-                console.log('Unhandled ClassProperty -> Call', expression.callee.type);
+                console.error('Unhandled ClassProperty -> Call', expression.callee.type);
             }
           }
         }
