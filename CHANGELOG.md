@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.2...v1.1.0) (2022-02-04)
+
+
+### Features
+
+* **async-to-generator:** new codemod ([e3d6f91](https://github.com/NullVoxPopuli/ember-concurrency-codemods/commit/e3d6f9162dd783d612da68a9e1e33d64cac0c449))
+
 ## [1.0.2](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.1...v1.0.2) (2022-01-26)
 
 
