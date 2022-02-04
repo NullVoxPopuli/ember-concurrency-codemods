@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { getParser } = require('codemod-cli').jscodeshift;
 const { getOptions } = require('codemod-cli');
 
@@ -6,6 +8,10 @@ const { hasDecorators, firstMatchingDecorator } = require('../-utils');
 module.exports = function transformer(file, api) {
   const j = getParser(api);
   const options = getOptions();
+
+  let ext = path.extname(file.path);
+
+  let isTS = ext.includes('ts');
 
   // Remember to use the `ts` parser
   let root = j(file.source);
@@ -62,8 +68,10 @@ module.exports = function transformer(file, api) {
 
       let params = [...fn.params];
 
-      if (!hasThisParam(params)) {
-        params.unshift(thisParam());
+      if (isTS) {
+        if (!hasThisParam(params)) {
+          params.unshift(thisParam());
+        }
       }
 
       let newFunction = j.functionExpression(null, params, j.blockStatement([...newBody]), true);
