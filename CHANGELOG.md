@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.1.0...v1.1.1) (2022-02-04)
+
+
+### Bug Fixes
+
+* **async-to-generator:** support javascript ([6c767de](https://github.com/NullVoxPopuli/ember-concurrency-codemods/commit/6c767de4c8bdd977490d8d800583df64b82ca7be))
+
 # [1.1.0](https://github.com/NullVoxPopuli/ember-concurrency-codemods/compare/v1.0.2...v1.1.0) (2022-02-04)
 
 
