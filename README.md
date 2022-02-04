@@ -24,6 +24,8 @@ node ./bin/cli.js <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 ## Transforms
 
 <!--TRANSFORMS_START-->
+* [-utils](transforms/-utils/README.md)
+* [async-to-generator](transforms/async-to-generator/README.md)
 * [detach-reactivity](transforms/detach-reactivity/README.md)
 <!--TRANSFORMS_END-->
 

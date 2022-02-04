@@ -23,7 +23,9 @@ node ./bin/cli.js detach-reactivity path/of/files/ or/some**/*glob.js
 * [basic](#basic)
 * [ec-async](#ec-async)
 * [old](#old)
+* [other-yield](#other-yield)
 * [standard](#standard)
+* [variable-declaration](#variable-declaration)
 <!--FIXTURES_TOC_END-->
 
 <!--FIXTURES_CONTENT_START-->
@@ -152,6 +154,36 @@ export class A {
 
 ```
 ---
+<a id="other-yield">**other-yield**</a>
+
+**Input** (<small>[other-yield.input.js](transforms/detach-reactivity/__testfixtures__/other-yield.input.js)</small>):
+```js
+import { task, timeout } from 'ember-concurrency';
+
+export class A {
+  @task
+  *expandTask({ delay } = {}) {
+    yield timeout(delay ?? 0);
+    console.log('hi');
+  }
+}
+
+```
+
+**Output** (<small>[other-yield.output.js](transforms/detach-reactivity/__testfixtures__/other-yield.output.js)</small>):
+```js
+import { task, timeout } from 'ember-concurrency';
+
+export class A {
+  @task
+  *expandTask({ delay } = {}) {
+    yield timeout(delay ?? 0);
+    console.log('hi');
+  }
+}
+
+```
+---
 <a id="standard">**standard**</a>
 
 **Input** (<small>[standard.input.js](transforms/detach-reactivity/__testfixtures__/standard.input.js)</small>):
@@ -190,5 +222,32 @@ export class A {
   }
 }
 
+```
+---
+<a id="variable-declaration">**variable-declaration**</a>
+
+**Input** (<small>[variable-declaration.input.js](transforms/detach-reactivity/__testfixtures__/variable-declaration.input.js)</small>):
+```js
+import { task } from 'ember-concurrency';
+
+export class A {
+    @task
+    *foo() {
+        let a = this;
+    }
+}
+```
+
+**Output** (<small>[variable-declaration.output.js](transforms/detach-reactivity/__testfixtures__/variable-declaration.output.js)</small>):
+```js
+import { task } from 'ember-concurrency';
+
+export class A {
+    @task
+    *foo() {
+        yield Promise.resolve();
+        let a = this;
+    }
+}
 ```
 <!--FIXTURES_CONTENT_END-->
