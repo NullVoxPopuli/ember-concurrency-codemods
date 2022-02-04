@@ -1,6 +1,8 @@
 const { getParser } = require('codemod-cli').jscodeshift;
 const { getOptions } = require('codemod-cli');
 
+const { hasDecorators, firstMatchingDecorator } = require('../-utils');
+
 module.exports = function transformer(file, api) {
   const j = getParser(api);
   const options = getOptions();
@@ -66,38 +68,6 @@ module.exports = function transformer(file, api) {
     if (node.generator) {
       bodyBlock.body.unshift(yieldyBoi);
     }
-  }
-
-  function firstMatchingDecorator(node, named = []) {
-    if (!node.decorators) return;
-
-    return node.decorators.find((decorator) => {
-      let { expression } = decorator;
-
-      switch (expression.type) {
-        case 'MethodDefinition': {
-        }
-        case 'CallExpression': {
-          let { callee } = expression;
-
-          switch (callee.type) {
-            case 'Identifier':
-              return named.includes(callee.name);
-            case 'MemberExpression': {
-              let { object } = callee;
-
-              return named.includes(object.callee.name);
-            }
-          }
-        }
-        case 'Identifier':
-          return named.includes(expression.name);
-      }
-    });
-  }
-
-  function hasDecorators(node, named = []) {
-    return Boolean(firstMatchingDecorator(node, named));
   }
 
   ///////////////////////////////////
